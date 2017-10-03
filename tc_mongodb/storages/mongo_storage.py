@@ -114,7 +114,21 @@ class Storage(BaseStorage):
     def remove(self, path):
         connection, db, storage = self.__conn__()
 
-        storage.delete_many({'path': path})
+        doc = {
+            'path': path,
+            'created_at': datetime.now(),
+            'debug': '123456789'
+        }
+        doc2 = {
+            'path': path
+        }
+
+        doc_with_crypto = dict(doc)
+        doc_with_crypto2 = dict(doc2)
+
+        storage.insert(doc_with_crypto)
+
+        storage.delete_many(doc2)
 
         #stored = storage.find_one({'path': path})
         #fs = gridfs.GridFS(db)
