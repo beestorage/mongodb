@@ -112,9 +112,11 @@ class Storage(BaseStorage):
 
     def remove(self, path):
         connection, db, storage = self.__conn__()
-        stored = storage.find_one({'path': path})
-        fs = gridfs.GridFS(db)
-        fs.delete(stored['file_id'])
+
+        storage.delete_many({'path': path})
+        #stored = storage.find_one({'path': path})
+        #fs = gridfs.GridFS(db)
+        #fs.delete(stored['file_id'])
 
 
     def __is_expired(self, stored):
