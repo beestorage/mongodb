@@ -111,11 +111,11 @@ class Storage(BaseStorage):
             callback(True)
 
     def remove(self, path):
-        #if not self.exists(path):
-        #    return
-
         connection, db, storage = self.__conn__()
-        storage.remove({'path': path})
+        stored = storage.find_one({'path': path})
+        fs = gridfs.GridFS(db)
+        fs.delete(stored['file_id'])
+
 
     def __is_expired(self, stored):
         timediff = datetime.now() - stored.get('created_at')
