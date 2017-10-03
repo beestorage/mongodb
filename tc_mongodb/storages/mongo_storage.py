@@ -45,6 +45,7 @@ class Storage(BaseStorage):
         file_data = fs.put(StringIO(bytes), **doc)
 
         doc_with_crypto['file_id'] = file_data
+        doc_with_crypto['myDebug'] = 'mmm'
         storage.insert(doc_with_crypto)
         return path
 
@@ -114,6 +115,7 @@ class Storage(BaseStorage):
         connection, db, storage = self.__conn__()
 
         storage.delete_many({'path': path})
+
         #stored = storage.find_one({'path': path})
         #fs = gridfs.GridFS(db)
         #fs.delete(stored['file_id'])
