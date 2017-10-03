@@ -19,7 +19,7 @@ setup(
     description=("Thumbor thumbor storage adapters"),
     license="MIT",
     keywords="thumbor mongodb mongo",
-    url="https://github.com/thumbor-community/mongodb",
+    url="https://github.com/lionants02/mongodb",
     packages=[
         'tc_mongodb',
         'tc_mongodb.storages',
