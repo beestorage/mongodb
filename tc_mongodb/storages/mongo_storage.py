@@ -119,8 +119,6 @@ class Storage(BaseStorage):
         #Q find id
         stored = storage.find_one({'path': path})
 
-
-
         docGridFSchunks = {
             'files_id': stored['file_id']
         }
