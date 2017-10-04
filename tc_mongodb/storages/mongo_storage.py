@@ -129,9 +129,9 @@ class Storage(BaseStorage):
             'path': path
         }
         #doc_with_crypto2 = dict(doc2)
-        storage.delete_many(docCollremove)
-        storageFsFile.delete_many(docGridFSfile)
-        storageFsChunks.delete_many(docGridFSchunks)
+        storage.delete_one(docCollremove)
+        storageFsFile.delete_one(docGridFSfile)
+        storageFsChunks.delete_one(docGridFSchunks)
 
         #stored = storage.find_one({'path': path})
         #fs = gridfs.GridFS(db)
