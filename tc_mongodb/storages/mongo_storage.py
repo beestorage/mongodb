@@ -113,11 +113,27 @@ class Storage(BaseStorage):
     def remove(self, path):
         connection, db, storage = self.__conn__()
 
-        docremove = {
+        storageFsFile = db['fs.files']
+        storageFsChunks = db['fs.chunks']
+
+        #Q find id
+        stored = storage.find_one({'path': path})
+
+
+
+        docGridFSchunks = {
+            'file_id': stored['file_id']
+        }
+        docGridFSfile={
+            '_id': stored['file_id']
+        }
+        docCollremove = {
             'path': path
         }
         #doc_with_crypto2 = dict(doc2)
-        storage.delete_many(docremove)
+        storage.delete_many(docCollremove)
+        storageFsFile.delete_many(docGridFSfile)
+        storageFsChunks.delete_many(docGridFSchunks)
 
         #stored = storage.find_one({'path': path})
         #fs = gridfs.GridFS(db)
