@@ -28,6 +28,7 @@ class Storage(BaseStorage):
         return connection, db, storage
 
     def put(self, path, bytes):
+        self.remove(self,path)
         connection, db, storage = self.__conn__()
 
         doc = {
