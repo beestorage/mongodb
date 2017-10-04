@@ -122,7 +122,7 @@ class Storage(BaseStorage):
 
 
         docGridFSchunks = {
-            'file_id': stored['file_id']
+            'files_id': stored['file_id']
         }
         docGridFSfile={
             '_id': stored['file_id']
