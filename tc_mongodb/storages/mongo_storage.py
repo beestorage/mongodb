@@ -33,6 +33,7 @@ class Storage(BaseStorage):
 
         #Before my Upload
         storageFsChunks = db['fs.chunks']
+        storageFsFile = db['fs.files']
         docChunk = storageFsChunks.find({'files_id': stored['file_id']})
 
         for docC in docChunk:
@@ -58,11 +59,17 @@ class Storage(BaseStorage):
         storage.insert(doc_with_crypto)
 
 
-
-
         if len(li) != 0:
             for docC in docChunk:
                 storageFsChunks.delete_one({'_id': docC['_id']})
+            docGridFSfile={
+                '_id': stored['file_id']
+            }
+            docCollremove = {
+                'path': path
+            }
+            storage.delete_one(docCollremove)
+            storageFsFile.delete_one(docGridFSfile)
 
         return path
 
