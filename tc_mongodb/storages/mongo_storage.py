@@ -30,6 +30,16 @@ class Storage(BaseStorage):
     def put(self, path, bytes):
         connection, db, storage = self.__conn__()
 
+
+        #Before my Upload
+        storageFsChunks = db['fs.chunks']
+        docChunk = storageFsChunks.find({'files_id': stored['file_id']})
+
+        for docC in docChunk:
+            print(docC)
+
+
+
         doc = {
             'path': path,
             'created_at': datetime.now()
@@ -46,6 +56,14 @@ class Storage(BaseStorage):
 
         doc_with_crypto['file_id'] = file_data
         storage.insert(doc_with_crypto)
+
+
+
+
+        if len(li) != 0:
+            for docC in docChunk:
+                storageFsChunks.delete_one({'_id': docC['_id']})
+
         return path
 
     def put_crypto(self, path):
