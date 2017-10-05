@@ -65,10 +65,10 @@ class Storage(BaseStorage):
                 '_id': stored['file_id']
             }
             docCollremove = {
-                'path': path
+                '_id': stored['_id']
             }
-            storage.delete_one(docCollremove)
-            storageFsFile.delete_one(docGridFSfile)
+            storage.delete_many(docCollremove)
+            storageFsFile.delete_many(docGridFSfile)
 
         return path
 
