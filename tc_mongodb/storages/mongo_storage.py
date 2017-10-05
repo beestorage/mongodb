@@ -36,10 +36,10 @@ class Storage(BaseStorage):
         storageFsFile = db['fs.files']
         stored = storage.find_one({'path': path})
 
-        docChunk = storageFsChunks.find({'files_id': stored['file_id']})
-
-        for docC in docChunk:
-            print(docC)
+        if len(stored) != 0:
+            docChunk = storageFsChunks.find({'files_id': stored['file_id']})
+            for docC in docChunk:
+                print(docC)
 
 
 
