@@ -34,6 +34,8 @@ class Storage(BaseStorage):
         #Before my Upload
         storageFsChunks = db['fs.chunks']
         storageFsFile = db['fs.files']
+        stored = storage.find_one({'path': path})
+
         docChunk = storageFsChunks.find({'files_id': stored['file_id']})
 
         for docC in docChunk:
