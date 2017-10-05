@@ -39,10 +39,6 @@ class Storage(BaseStorage):
         docChunk=[]
         if stored:
             docChunk = storageFsChunks.find({'files_id': stored['file_id']})
-            for docC in docChunk:
-                print(docC)
-
-
 
         doc = {
             'path': path,
@@ -156,14 +152,9 @@ class Storage(BaseStorage):
         docCollremove = {
             'path': path
         }
-        #doc_with_crypto2 = dict(doc2)
         storage.delete_many(docCollremove)
         storageFsFile.delete_many(docGridFSfile)
         storageFsChunks.delete_many(docGridFSchunks)
-
-        #stored = storage.find_one({'path': path})
-        #fs = gridfs.GridFS(db)
-        #fs.delete(stored['file_id'])
 
 
     def __is_expired(self, stored):
