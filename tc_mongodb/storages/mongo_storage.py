@@ -36,7 +36,7 @@ class Storage(BaseStorage):
         storageFsFile = db['fs.files']
         stored = storage.find_one({'path': path})
 
-        if len(stored) != 0:
+        if stored:
             docChunk = storageFsChunks.find({'files_id': stored['file_id']})
             for docC in docChunk:
                 print(docC)
@@ -61,7 +61,7 @@ class Storage(BaseStorage):
         storage.insert(doc_with_crypto)
 
 
-        if len(li) != 0:
+        if docChunk:
             for docC in docChunk:
                 storageFsChunks.delete_one({'_id': docC['_id']})
             docGridFSfile={
