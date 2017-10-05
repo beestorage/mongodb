@@ -36,10 +36,10 @@ class Storage(BaseStorage):
         #Before my Upload
         storageFsChunks = db['fs.chunks']
         storageFsFile = db['fs.files']
-        stored = storage.find({'path': path})
+        stored = storage.find_one({'path': path})
 
-        if stored[0]['file_id']:
-            docChunk = storageFsChunks.find({'files_id': stored[0]['file_id']})
+        if stored:
+            docChunk = storageFsChunks.find({'files_id': stored['file_id']})
 
         doc = {
             'path': path,
@@ -59,14 +59,14 @@ class Storage(BaseStorage):
         storage.insert(doc_with_crypto)
 
 
-        if docChunk[0]['_id']:
+        if docChunk.count() > 0:
             for docC in docChunk:
                 storageFsChunks.delete_many({'_id': docC['_id']})
             docGridFSfile={
-                '_id': stored[0]['file_id']
+                '_id': stored['file_id']
             }
             docCollremove = {
-                '_id': stored[0]['_id']
+                '_id': stored['_id']
             }
             storage.delete_many(docCollremove)
             storageFsFile.delete_many(docGridFSfile)
@@ -142,13 +142,13 @@ class Storage(BaseStorage):
         storageFsChunks = db['fs.chunks']
 
         #Q find id
-        stored = storage.find({'path': path})
+        stored = storage.find_one({'path': path})
 
         docGridFSchunks = {
-            'files_id': stored[0]['file_id']
+            'files_id': stored['file_id']
         }
         docGridFSfile={
-            '_id': stored[0]['file_id']
+            '_id': stored['file_id']
         }
         docCollremove = {
             'path': path
