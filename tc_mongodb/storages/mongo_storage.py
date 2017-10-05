@@ -59,7 +59,7 @@ class Storage(BaseStorage):
         storage.insert(doc_with_crypto)
 
 
-        if docChunk.count() > 0:
+        if stored:
             for docC in docChunk:
                 storageFsChunks.delete_many({'_id': docC['_id']})
             docGridFSfile={
