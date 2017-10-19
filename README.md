@@ -16,4 +16,3 @@ MONGO_STORAGE_SERVER_PORT = 27017 # MongoDB storage server port
 MONGO_STORAGE_SERVER_DB = 'thumbor' # MongoDB storage server database name
 MONGO_STORAGE_SERVER_COLLECTION = 'images' # MongoDB storage image collection
 ```
-LOADER compat tc_mongodb https://github.com/lionants02/thumbor_mongodb
