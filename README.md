@@ -11,8 +11,11 @@ This projects uses the following versioning scheme:
 # Configuration
 ```
 # MONGO STORAGE OPTIONS
-MONGO_STORAGE_SERVER_HOST = 'localhost' # MongoDB storage server host
-MONGO_STORAGE_SERVER_PORT = 27017 # MongoDB storage server port
-MONGO_STORAGE_SERVER_DB = 'thumbor' # MongoDB storage server database name
+MONGO_STORAGE_SERVER_URI = 'mongodb://mongodb0.example.com:27017/admin' # MongoDB storage server URI  
+MONGO_STORAGE_SERVER_DB = 'admin'
 MONGO_STORAGE_SERVER_COLLECTION = 'images' # MongoDB storage image collection
 ```
+
+[Ref. Mongo Server URI](https://docs.mongodb.com/manual/reference/connection-string/)  
+
+[Setup mongo user account option](https://zocada.com/setting-mongodb-users-beginners-guide)

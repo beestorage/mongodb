@@ -18,9 +18,9 @@ from tornado.concurrent import return_future
 class Storage(BaseStorage):
 
     def __conn__(self):
+        # https://docs.mongodb.com/manual/reference/connection-string/
         connection = MongoClient(
-            self.context.config.MONGO_STORAGE_SERVER_HOST,
-            self.context.config.MONGO_STORAGE_SERVER_PORT
+            self.context.config.MONGO_STORAGE_SERVER_URI
         )
 
         db = connection[self.context.config.MONGO_STORAGE_SERVER_DB]
