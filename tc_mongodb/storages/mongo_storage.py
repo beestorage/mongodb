@@ -7,6 +7,7 @@
 from datetime import datetime, timedelta
 from cStringIO import StringIO
 
+# https://api.mongodb.com/python/current/tutorial.html
 from pymongo import MongoClient
 import gridfs
 
@@ -30,10 +31,9 @@ class Storage(BaseStorage):
     def put(self, path, bytes):
         connection, db, storage = self.__conn__()
 
-
         stored=[]
         docChunk=[]
-        #Before my Upload
+        #Before my Upload https://docs.mongodb.com/manual/core/gridfs/
         storageFsChunks = db['fs.chunks']
         storageFsFile = db['fs.files']
         stored = storage.find_one({'path': path})
@@ -47,7 +47,9 @@ class Storage(BaseStorage):
         }
 
         doc_with_crypto = dict(doc)
+        # Check set STORES_CRYPTO_KEY_FOR_EACH_IMAGE
         if self.context.config.STORES_CRYPTO_KEY_FOR_EACH_IMAGE:
+            # Check security_key https://github.com/thumbor/thumbor/wiki/security#hmac-method
             if not self.context.server.security_key:
                 raise RuntimeError("STORES_CRYPTO_KEY_FOR_EACH_IMAGE can't be True if no SECURITY_KEY specified")
             doc_with_crypto['crypto'] = self.context.server.security_key
@@ -156,7 +158,6 @@ class Storage(BaseStorage):
         storage.delete_many(docCollremove)
         storageFsFile.delete_many(docGridFSfile)
         storageFsChunks.delete_many(docGridFSchunks)
-
 
     def __is_expired(self, stored):
         timediff = datetime.now() - stored.get('created_at')
