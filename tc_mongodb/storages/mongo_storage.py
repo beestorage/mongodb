@@ -155,7 +155,7 @@ class Storage(BaseStorage):
                 '_id': dictData['file_id']
             }
             mongoDictQuery = {
-                'path': path
+                'path': { '$regex': path }
             }
             dictThumborToMongo.delete_many(mongoDictQuery)
             mongoFileMetadata.delete_many(mongoGridFsQuery)
