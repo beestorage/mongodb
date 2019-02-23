@@ -36,7 +36,7 @@ class Storage(BaseStorage):
         #Before my Upload https://docs.mongodb.com/manual/core/gridfs/
         mongoBinaryStorage = db['fs.chunks']
         mongoFileMetadata = db['fs.files']
-        dictData = dictThumborToMongo.find_one({'path': path})
+        dictData = dictThumborToMongo.find_one({'path': { '$regex': path }})
 
         if dictData:
             mongoBinaryData = mongoBinaryStorage.find({'files_id': dictData['file_id']})
@@ -145,23 +145,25 @@ class Storage(BaseStorage):
         mongoBinaryStorage = db['fs.chunks']
 
         #Q find id
-        dictDatas = dictThumborToMongo.find({'path': { '$regex': path }})
+        removeListDictDatas = dictThumborToMongo.find({'path': { '$regex': path }})
+        deleteDataList(db,dictThumborToMongo,removeListDictDatas)
 
-        for dictData in dictDatas:
+    def __is_expired(self, dictData):
+        timediff = datetime.now() - dictData.get('created_at')
+        return timediff > timedelta(seconds=self.context.config.STORAGE_EXPIRATION_SECONDS)
+        #return False
+
+    def deleteDataList(db, dictThumborToMongo ,removeListDictDatas):
+        mongoFileMetadata = db['fs.files']
+        mongoBinaryStorage = db['fs.chunks']
+
+        for dictData in removeListDictDatas:
             docGridFSchunks = {
                 'files_id': dictData['file_id']
             }
             mongoGridFsQuery={
                 '_id': dictData['file_id']
             }
-            mongoDictQuery = {
-                'path': { '$regex': path }
-            }
-            dictThumborToMongo.delete_many(mongoDictQuery)
+            dictThumborToMongo.delete_many(dictData)
             mongoFileMetadata.delete_many(mongoGridFsQuery)
             mongoBinaryStorage.delete_many(docGridFSchunks)
-
-    def __is_expired(self, dictData):
-        timediff = datetime.now() - dictData.get('created_at')
-        return timediff > timedelta(seconds=self.context.config.STORAGE_EXPIRATION_SECONDS)
-        #return False
