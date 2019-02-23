@@ -14,6 +14,20 @@ import gridfs
 from thumbor.storages import BaseStorage
 from tornado.concurrent import return_future
 
+def deleteDataList(db, dictThumborToMongo ,removeListDictDatas):
+    mongoFileMetadata = db['fs.files']
+    mongoBinaryStorage = db['fs.chunks']
+
+    for dictData in removeListDictDatas:
+        docGridFSchunks = {
+            'files_id': dictData['file_id']
+        }
+        mongoGridFsQuery={
+            '_id': dictData['file_id']
+        }
+        dictThumborToMongo.delete_many(dictData)
+        mongoFileMetadata.delete_many(mongoGridFsQuery)
+        mongoBinaryStorage.delete_many(docGridFSchunks)
 
 class Storage(BaseStorage):
 
@@ -31,15 +45,12 @@ class Storage(BaseStorage):
     def put(self, path, bytes):
         connection, db, dictThumborToMongo = self.__conn__()
 
-        dictData=[]
+        oldDictDatas=[]
         mongoBinaryData=[]
         #Before my Upload https://docs.mongodb.com/manual/core/gridfs/
         mongoBinaryStorage = db['fs.chunks']
         mongoFileMetadata = db['fs.files']
-        dictData = dictThumborToMongo.find_one({'path': { '$regex': path }})
-
-        if dictData:
-            mongoBinaryData = mongoBinaryStorage.find({'files_id': dictData['file_id']})
+        oldDictDatas = dictThumborToMongo.find({'path': { '$regex': path }})
 
         doc = {
             'path': path,
@@ -60,19 +71,8 @@ class Storage(BaseStorage):
         doc_with_crypto['file_id'] = file_data_id
         dictThumborToMongo.insert(doc_with_crypto)
 
-
-        if dictData:
-            for docC in mongoBinaryData:
-                mongoBinaryStorage.delete_many({'_id': docC['_id']})
-            mongoGridFsQuery={
-                '_id': dictData['file_id']
-            }
-            mongoDictQuery = {
-                '_id': dictData['_id']
-            }
-            dictThumborToMongo.delete_many(mongoDictQuery)
-            mongoFileMetadata.delete_many(mongoGridFsQuery)
-            # TODO check remove binary file
+        if oldDictDatas:
+            deleteDataList(db,dictThumborToMongo,oldDictDatas)
 
         return path
 
@@ -152,18 +152,3 @@ class Storage(BaseStorage):
         timediff = datetime.now() - dictData.get('created_at')
         return timediff > timedelta(seconds=self.context.config.STORAGE_EXPIRATION_SECONDS)
         #return False
-
-    def deleteDataList(db, dictThumborToMongo ,removeListDictDatas):
-        mongoFileMetadata = db['fs.files']
-        mongoBinaryStorage = db['fs.chunks']
-
-        for dictData in removeListDictDatas:
-            docGridFSchunks = {
-                'files_id': dictData['file_id']
-            }
-            mongoGridFsQuery={
-                '_id': dictData['file_id']
-            }
-            dictThumborToMongo.delete_many(dictData)
-            mongoFileMetadata.delete_many(mongoGridFsQuery)
-            mongoBinaryStorage.delete_many(docGridFSchunks)
