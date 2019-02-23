@@ -145,20 +145,21 @@ class Storage(BaseStorage):
         mongoBinaryStorage = db['fs.chunks']
 
         #Q find id
-        dictData = dictThumborToMongo.find_one({'path': path})
+        dictDatas = dictThumborToMongo.find({'path': { '$regex': path }})
 
-        docGridFSchunks = {
-            'files_id': dictData['file_id']
-        }
-        mongoGridFsQuery={
-            '_id': dictData['file_id']
-        }
-        mongoDictQuery = {
-            'path': path
-        }
-        dictThumborToMongo.delete_many(mongoDictQuery)
-        mongoFileMetadata.delete_many(mongoGridFsQuery)
-        mongoBinaryStorage.delete_many(docGridFSchunks)
+        for dictData in dictDatas:
+            docGridFSchunks = {
+                'files_id': dictData['file_id']
+            }
+            mongoGridFsQuery={
+                '_id': dictData['file_id']
+            }
+            mongoDictQuery = {
+                'path': path
+            }
+            dictThumborToMongo.delete_many(mongoDictQuery)
+            mongoFileMetadata.delete_many(mongoGridFsQuery)
+            mongoBinaryStorage.delete_many(docGridFSchunks)
 
     def __is_expired(self, dictData):
         timediff = datetime.now() - dictData.get('created_at')
