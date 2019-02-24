@@ -2,17 +2,15 @@ version: 2.1
 
 jobs:
   build:
-    working_directory: ~/thumbor-mongo-storage
     docker:
       - image: circleci/python:2.7
+    working_directory: ~/thumbor-mongo-storage
 
     steps:
       - checkout  # checkout source code to working directory
       - run:
-        name: Install py plugin
-        command: |  # use pipenv to install dependencies
-          sudo pip install pymongo
+          name: 'Install py plugin'
+          command: 'sudo pip install pymongo'
       - run:
-        name: build
-        command: |
-          python -m compileall tc_mongodb/storages/mongo_storage.py
+          name: build
+          command: 'python -m compileall tc_mongodb/storages/mongo_storage.py'
