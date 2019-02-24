@@ -9,6 +9,7 @@ from cStringIO import StringIO
 
 # https://api.mongodb.com/python/current/tutorial.html
 from pymongo import MongoClient
+import pymongo
 import gridfs
 
 from thumbor.storages import BaseStorage
@@ -40,7 +41,7 @@ class Storage(BaseStorage):
         db = connection[self.context.config.MONGO_STORAGE_SERVER_DB]
         dictThumborToMongo = db[self.context.config.MONGO_STORAGE_SERVER_COLLECTION]
 
-        # dictThumborToMongo.create_index([('path',pymongo.ASCENDING)],unique=True)
+        dictThumborToMongo.create_index([('path',pymongo.ASCENDING)],unique=True)
 
         return connection, db, dictThumborToMongo
 
