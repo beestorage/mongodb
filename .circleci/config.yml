@@ -1,0 +1,18 @@
+version: 2
+
+jobs:
+  build:
+    working_directory: ~/thumbor-mongo-storage
+    docker:
+      - image: circleci/python:2.7
+
+    steps:
+      - checkout  # checkout source code to working directory
+      - run:
+        name: Install py plugin
+        command: |
+          sudo pip install pymongo
+      - run:
+        name: build
+        command: |
+          sudo python -m compileall tc_mongodb/storages/mongo_storage.py
