@@ -110,21 +110,21 @@ class Storage(BaseStorage):
     def get_crypto(self, path, callback):
         connection, db, dictThumborToMongo = self.__conn__()
 
-        crypto = dictThumborToMongo.find_one({'path': path})
-        callback(crypto.get('crypto') if crypto else None)
+        crypto = dictThumborToMongo.find({'path': path})
+        callback(crypto[0].get('crypto') if crypto else None)
 
     @return_future
     def get_detector_data(self, path, callback):
         connection, db, dictThumborToMongo = self.__conn__()
 
-        doc = dictThumborToMongo.find_one({'path': path})
-        callback(doc.get('detector_data') if doc else None)
+        doc = dictThumborToMongo.find({'path': path})
+        callback(doc[0].get('detector_data') if doc else None)
 
     @return_future
     def get(self, path, callback):
         connection, db, dictThumborToMongo = self.__conn__()
 
-        dictData = dictThumborToMongo.find_one({'path': path})
+        dictData = dictThumborToMongo.find({'path': path})[0]
 
         if not dictData or self.__is_expired(dictData):
             callback(None)
@@ -140,7 +140,7 @@ class Storage(BaseStorage):
     def exists(self, path, callback):
         connection, db, dictThumborToMongo = self.__conn__()
 
-        dictData = dictThumborToMongo.find_one({'path': path})
+        dictData = dictThumborToMongo.find({'path': path})[0]
 
         if not dictData or self.__is_expired(dictData):
             callback(False)
