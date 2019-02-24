@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 
 jobs:
   build:
@@ -10,9 +10,9 @@ jobs:
       - checkout  # checkout source code to working directory
       - run:
         name: Install py plugin
-        command: |
+        command: |  # use pipenv to install dependencies
           sudo pip install pymongo
       - run:
         name: build
         command: |
-          sudo python -m compileall tc_mongodb/storages/mongo_storage.py
+          python -m compileall tc_mongodb/storages/mongo_storage.py
