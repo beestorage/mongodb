@@ -1,4 +1,5 @@
 # tc_mongodb
+[![CircleCI](https://circleci.com/gh/beestorage/mongodb.svg?style=svg)](https://circleci.com/gh/beestorage/mongodb)  
 MongoDB storage adapter for thumbor.
 
 # Versions
