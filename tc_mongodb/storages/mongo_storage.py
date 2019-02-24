@@ -93,10 +93,11 @@ class Storage(BaseStorage):
         if not self.context.server.security_key:
             raise RuntimeError("STORES_CRYPTO_KEY_FOR_EACH_IMAGE can't be True if no SECURITY_KEY specified")
 
-        crypto = dictThumborToMongo.find_one({'path': path})
-
-        crypto['crypto'] = self.context.server.security_key
-        dictThumborToMongo.update({'path': path}, crypto)
+        cryptos = dictThumborToMongo.find({'path': { '$regex': path }})
+        for crypto in cryptos:
+            cryptoOld = crypto.copy()
+            crypto['crypto'] = self.context.server.security_key
+            dictThumborToMongo.update(cryptoOld, crypto)
         return path
 
     def put_detector_data(self, path, data):
