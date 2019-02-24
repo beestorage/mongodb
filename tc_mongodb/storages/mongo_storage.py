@@ -75,11 +75,11 @@ class Storage(BaseStorage):
         file_data_id = fs.put(StringIO(bytes), **doc)
 
         doc_with_crypto['file_id'] = file_data_id
-        dictThumborToMongo.insert(doc_with_crypto)
 
         if oldDictDatas:
             deleteDataList(db,dictThumborToMongo,oldDictDatas)
 
+        dictThumborToMongo.insert(doc_with_crypto)
         return path
 
     def put_crypto(self, path):
