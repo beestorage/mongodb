@@ -53,6 +53,10 @@ class Storage(BaseStorage):
         mongoBinaryStorage = db['fs.chunks']
         mongoFileMetadata = db['fs.files']
         oldDictDatas = dictThumborToMongo.find({'path': { '$regex': path }})
+        if oldDictDatas:
+            for dictData in oldDictDatas:
+                pass
+
         doc = {
             'path': path,
             'created_at': datetime.now()
@@ -159,8 +163,6 @@ class Storage(BaseStorage):
         deleteDataList(db,dictThumborToMongo,removeListDictDatas)
 
     def __is_expired(self, dictData):
-        if not dictData.get('created_at'):
-            return True
         timediff = datetime.now() - dictData.get('created_at')
         return timediff > timedelta(seconds=self.context.config.STORAGE_EXPIRATION_SECONDS)
         #return False
