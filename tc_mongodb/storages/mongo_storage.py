@@ -40,6 +40,8 @@ class Storage(BaseStorage):
         db = connection[self.context.config.MONGO_STORAGE_SERVER_DB]
         dictThumborToMongo = db[self.context.config.MONGO_STORAGE_SERVER_COLLECTION]
 
+        # dictThumborToMongo.create_index([('path',pymongo.ASCENDING)],unique=True)
+
         return connection, db, dictThumborToMongo
 
     def put(self, path, bytes):
@@ -51,12 +53,6 @@ class Storage(BaseStorage):
         mongoBinaryStorage = db['fs.chunks']
         mongoFileMetadata = db['fs.files']
         oldDictDatas = dictThumborToMongo.find({'path': { '$regex': path }})
-        if oldDictDatas:
-            print "Test 1"
-            for dictData in oldDictDatas:
-                print dictData + "   "
-
-
         doc = {
             'path': path,
             'created_at': datetime.now()
@@ -77,9 +73,6 @@ class Storage(BaseStorage):
         dictThumborToMongo.insert(doc_with_crypto)
 
         if oldDictDatas:
-            print "Test 2"
-            for dictData in oldDictDatas:
-                print dictData + "   "
             deleteDataList(db,dictThumborToMongo,oldDictDatas)
 
         return path
@@ -111,6 +104,8 @@ class Storage(BaseStorage):
         connection, db, dictThumborToMongo = self.__conn__()
 
         crypto = dictThumborToMongo.find({'path': path})
+        if not crypto:
+            callback(None)
         callback(crypto[0].get('crypto') if crypto else None)
 
     @return_future
@@ -118,21 +113,25 @@ class Storage(BaseStorage):
         connection, db, dictThumborToMongo = self.__conn__()
 
         doc = dictThumborToMongo.find({'path': path})
+        if not doc:
+            callback(None)
         callback(doc[0].get('detector_data') if doc else None)
 
     @return_future
     def get(self, path, callback):
         connection, db, dictThumborToMongo = self.__conn__()
 
-        dictData = dictThumborToMongo.find({'path': path})[0]
+        dictData = dictThumborToMongo.find({'path': path})
+        if not dictData:
+            callback(None)
 
-        if not dictData or self.__is_expired(dictData):
+        if not dictData[0] or self.__is_expired(dictData[0]):
             callback(None)
             return
 
         fs = gridfs.GridFS(db)
 
-        contents = fs.get(dictData['file_id']).read()
+        contents = fs.get(dictData[0]['file_id']).read()
 
         callback(str(contents))
 
@@ -140,9 +139,11 @@ class Storage(BaseStorage):
     def exists(self, path, callback):
         connection, db, dictThumborToMongo = self.__conn__()
 
-        dictData = dictThumborToMongo.find({'path': path})[0]
+        dictData = dictThumborToMongo.find({'path': path})
+        if not dictData:
+            callback(False)
 
-        if not dictData or self.__is_expired(dictData):
+        if not dictData[0] or self.__is_expired(dictData[0]):
             callback(False)
         else:
             callback(True)
@@ -158,6 +159,8 @@ class Storage(BaseStorage):
         deleteDataList(db,dictThumborToMongo,removeListDictDatas)
 
     def __is_expired(self, dictData):
+        if not dictData.get('created_at'):
+            return True
         timediff = datetime.now() - dictData.get('created_at')
         return timediff > timedelta(seconds=self.context.config.STORAGE_EXPIRATION_SECONDS)
         #return False
