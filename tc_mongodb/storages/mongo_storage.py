@@ -109,30 +109,33 @@ class Storage(BaseStorage):
         connection, db, dictThumborToMongo = self.__conn__()
 
         crypto = dictThumborToMongo.find({'path': path})
-        if not crypto:
+        try:
+            callback(crypto[0].get('crypto') if crypto else None)
+        except:
             callback(None)
-        callback(crypto[0].get('crypto') if crypto else None)
 
     @return_future
     def get_detector_data(self, path, callback):
         connection, db, dictThumborToMongo = self.__conn__()
 
         doc = dictThumborToMongo.find({'path': path})
-        if not doc:
+        try:
+            callback(doc[0].get('detector_data') if doc else None)
+        except:
             callback(None)
-        callback(doc[0].get('detector_data') if doc else None)
 
     @return_future
     def get(self, path, callback):
         connection, db, dictThumborToMongo = self.__conn__()
 
         dictData = dictThumborToMongo.find({'path': path})
-        if not dictData:
-            callback(None)
 
-        if not dictData[0] or self.__is_expired(dictData[0]):
+        try:
+            if not dictData[0] or self.__is_expired(dictData[0]):
+                callback(None)
+                return
+        except:
             callback(None)
-            return
 
         fs = gridfs.GridFS(db)
 
@@ -140,18 +143,21 @@ class Storage(BaseStorage):
 
         callback(str(contents))
 
+
+
     @return_future
     def exists(self, path, callback):
         connection, db, dictThumborToMongo = self.__conn__()
 
         dictData = dictThumborToMongo.find({'path': path})
-        if not dictData:
-            callback(False)
 
-        if not dictData[0] or self.__is_expired(dictData[0]):
+        try:
+            if not dictData[0] or self.__is_expired(dictData[0]):
+                callback(False)
+            else:
+                callback(True)
+        except:
             callback(False)
-        else:
-            callback(True)
 
     def remove(self, path):
         connection, db, dictThumborToMongo = self.__conn__()
