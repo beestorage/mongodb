@@ -51,6 +51,11 @@ class Storage(BaseStorage):
         mongoBinaryStorage = db['fs.chunks']
         mongoFileMetadata = db['fs.files']
         oldDictDatas = dictThumborToMongo.find({'path': { '$regex': path }})
+        if oldDictDatas:
+            print "Test 1"
+            for dictData in oldDictDatas:
+                print dictData + "   "
+
 
         doc = {
             'path': path,
@@ -72,6 +77,9 @@ class Storage(BaseStorage):
         dictThumborToMongo.insert(doc_with_crypto)
 
         if oldDictDatas:
+            print "Test 2"
+            for dictData in oldDictDatas:
+                print dictData + "   "
             deleteDataList(db,dictThumborToMongo,oldDictDatas)
 
         return path
